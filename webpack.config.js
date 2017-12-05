@@ -1,6 +1,7 @@
 'use strict';
 
 // Modules
+var path = require('path');
 var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -41,7 +42,7 @@ module.exports = function makeWebpackConfig() {
    */
   config.output = isTest ? {} : {
     // Absolute output directory
-    path: __dirname + '/dist',
+    path: path.resolve(__dirname + 'build'),
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
@@ -124,6 +125,18 @@ module.exports = function makeWebpackConfig() {
       // Allow loading html through js
       test: /\.html$/,
       loader: 'raw-loader'
+    },
+    {
+      test: /\.less$/,
+      // loader: 'css-loader!less-loader',
+      loader: isTest ? 'null-loader' : ExtractTextPlugin.extract({
+        fallbackLoader: 'style-loader',
+        loader: [
+          {loader: 'css-loader', query: {sourceMap: true}},
+          {loader: 'less-loader', query: {sourceMap: true}}
+        ],
+      }),
+      exclude: /node_modules/
     }]
   };
 
