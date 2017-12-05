@@ -1,8 +1,12 @@
 <main>
   <h1 class="title">Hello from Angular !</h1>
-
+  <div>
+    <p><a ui-sref="home">ITS HOME FUCKER</a></p>
+    <p><a ui-sref="first">FIRST!</a></p>
+    <p><a ui-sref="second">SECOND!</a></p>
+  </div>
   <!-- Images (and assets) are parsed and loaded from within the public directory -->
-  <img src="/img/logo.png">
+  <div ui-view></div>
 </main>
 <footer>
   <a ng-href="{{app.url}}">Webpack Angular Starter</a>
