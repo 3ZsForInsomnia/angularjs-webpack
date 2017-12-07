@@ -91,7 +91,7 @@ module.exports = function makeWebpackConfig() {
       // Compiles ES6 and ES7 into ES5 code
       test: /\.js$/,
       loader: 'babel-loader',
-      exclude: /node_modules/
+      // exclude: /node_modules/
     }, {
       // CSS LOADER
       // Reference: https://github.com/webpack/css-loader
@@ -113,7 +113,7 @@ module.exports = function makeWebpackConfig() {
           {loader: 'postcss-loader'}
         ],
       }),
-      exclude: /node_modules/
+      // exclude: /node_modules/
     }, {
       // ASSET LOADER
       // Reference: https://github.com/webpack/file-loader
@@ -123,14 +123,14 @@ module.exports = function makeWebpackConfig() {
       // You can add here any file extension you want to get copied to your output
       test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
       loader: 'file-loader',
-      exclude: /node_modules/
+      // exclude: /node_modules/
     }, {
       // HTML LOADER
       // Reference: https://github.com/webpack/raw-loader
       // Allow loading html through js
       test: /\.html$/,
       loader: 'raw-loader',
-      exclude: /node_modules/
+      // exclude: /node_modules/
     },
     {
       test: /\.less$/,
@@ -142,7 +142,7 @@ module.exports = function makeWebpackConfig() {
           {loader: 'less-loader', query: {sourceMap: true}}
         ],
       }),
-      exclude: /node_modules/
+      // exclude: /node_modules/
     }]
   };
 
