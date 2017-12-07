@@ -7,6 +7,8 @@ var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var CompressionPlugin = require('compression-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /**
  * Env
@@ -31,7 +33,8 @@ module.exports = function makeWebpackConfig() {
    * Karma will set this when it's a test build
    */
   config.entry = isTest ? void 0 : {
-    app: './src/app/app.js'
+    app: './src/app/app.js',
+    second: './src/its-a-module/button-mod.js'
   };
 
   /**
@@ -109,7 +112,8 @@ module.exports = function makeWebpackConfig() {
           {loader: 'css-loader', query: {sourceMap: true}},
           {loader: 'postcss-loader'}
         ],
-      })
+      }),
+      exclude: /node_modules/
     }, {
       // ASSET LOADER
       // Reference: https://github.com/webpack/file-loader
@@ -118,13 +122,15 @@ module.exports = function makeWebpackConfig() {
       // Pass along the updated reference to your code
       // You can add here any file extension you want to get copied to your output
       test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
-      loader: 'file-loader'
+      loader: 'file-loader',
+      exclude: /node_modules/
     }, {
       // HTML LOADER
       // Reference: https://github.com/webpack/raw-loader
       // Allow loading html through js
       test: /\.html$/,
-      loader: 'raw-loader'
+      loader: 'raw-loader',
+      exclude: /node_modules/
     },
     {
       test: /\.less$/,
@@ -144,20 +150,20 @@ module.exports = function makeWebpackConfig() {
   // https://github.com/deepsweet/istanbul-instrumenter-loader
   // Instrument JS files with istanbul-lib-instrument for subsequent code coverage reporting
   // Skips node_modules and files that end with .spec.js
-  if (isTest) {
-    config.module.rules.push({
-      enforce: 'pre',
-      test: /\.js$/,
-      exclude: [
-        /node_modules/,
-        /\.spec\.js$/
-      ],
-      loader: 'istanbul-instrumenter-loader',
-      query: {
-        esModules: true
-      }
-    })
-  }
+  // if (isTest) {
+  //   config.module.rules.push({
+  //     enforce: 'pre',
+  //     test: /\.js$/,
+  //     exclude: [
+  //       /node_modules/,
+  //       /\.spec\.js$/
+  //     ],
+  //     loader: 'istanbul-instrumenter-loader',
+  //     query: {
+  //       esModules: true
+  //     }
+  //   })
+  // }
 
   /**
    * PostCSS
@@ -173,14 +179,13 @@ module.exports = function makeWebpackConfig() {
    * List: http://webpack.github.io/docs/list-of-plugins.html
    */
   config.plugins = [
-    new webpack.LoaderOptionsPlugin({
-      test: /\.scss$/i,
-      options: {
-        postcss: {
-          plugins: [autoprefixer]
-        }
+    // new BundleAnalyzerPlugin({analyzerMode: 'static'}),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendors',
+      minChunks: function(module) {
+        return isExternal(module);
       }
-    })
+    }),
   ];
 
   // Skip rendering index.html in test mode
@@ -205,11 +210,11 @@ module.exports = function makeWebpackConfig() {
     config.plugins.push(
       // Reference: http://webpack.github.io/docs/list-of-plugins.html#noerrorsplugin
       // Only emit files when there are no errors
-      new webpack.NoErrorsPlugin(),
+      new webpack.NoEmitOnErrorsPlugin(),
 
       // Reference: http://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
       // Dedupe modules in the output
-      new webpack.optimize.DedupePlugin(),
+      // new webpack.optimize.DedupePlugin(),
 
       // Reference: http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
       // Minify all javascript, switch loaders to minimizing mode
@@ -219,7 +224,15 @@ module.exports = function makeWebpackConfig() {
       // Reference: https://github.com/kevlened/copy-webpack-plugin
       new CopyWebpackPlugin([{
         from: __dirname + '/src/public'
-      }])
+      }])// ,
+
+      // new CompressionPlugin({
+      //   asset: "[path].gz[query]",
+      //   algorithm: "gzip",
+      //   test: /\.js$|\.css$|\.html$/,
+      //   threshold: 10240,
+      //   minRatio: 0.8
+      // })
     )
   }
 
@@ -235,3 +248,11 @@ module.exports = function makeWebpackConfig() {
 
   return config;
 }();
+
+function isExternal(module) {
+  var context = module.context;
+  if (typeof context !== 'string') {
+    return false;
+  }
+  return context.indexOf('node_modules') !== -1;
+}

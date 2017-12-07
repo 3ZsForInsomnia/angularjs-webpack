@@ -4,6 +4,7 @@ import uiRouter from 'angular-ui-router';
 import '../style/app.less';
 
 import SecondCtrl from './second-route/second';
+import myModule from './../its-a-module/button-mod';
 
 let app = () => {
   return {
@@ -21,7 +22,7 @@ class AppCtrl {
 
 const MODULE_NAME = 'app';
 
-angular.module(MODULE_NAME, [uiRouter])
+angular.module(MODULE_NAME, [uiRouter, myModule])
   .directive('app', app)
   .controller('AppCtrl', AppCtrl)
   .config(function ($stateProvider, $urlRouterProvider) {
@@ -39,6 +40,10 @@ angular.module(MODULE_NAME, [uiRouter])
         url: '/second',
         template: require('./second-route/second.html'),
         controller: SecondCtrl
+      })
+      .state('third', {
+        url: '/third',
+        template: require('./third-route/third.html')
       });
   });
 
