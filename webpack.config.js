@@ -34,7 +34,6 @@ module.exports = function makeWebpackConfig() {
    */
   config.entry = isTest ? void 0 : {
     app: './src/app/app.js',
-    second: './src/its-a-module/button-mod.js'
   };
 
   /**
@@ -179,13 +178,25 @@ module.exports = function makeWebpackConfig() {
    * List: http://webpack.github.io/docs/list-of-plugins.html
    */
   config.plugins = [
-    // new BundleAnalyzerPlugin({analyzerMode: 'static'}),
+    new BundleAnalyzerPlugin({analyzerMode: 'static'}),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       minChunks: function(module) {
         return isExternal(module);
       }
     }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'second',
+    //   minChunks: function(module) {
+    //     return isSecondModule(module);
+    //   }
+    // }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'third',
+    //   minChunks: function(module) {
+    //     return isThirdModule(module);
+    //   }
+    // })
   ];
 
   // Skip rendering index.html in test mode
@@ -248,6 +259,22 @@ module.exports = function makeWebpackConfig() {
 
   return config;
 }();
+
+function isSecondModule(module) {
+  var context = module.context;
+  if (typeof context !== 'string') {
+    return false;
+  }
+  return context.indexOf('its-a-module') !== -1;
+}
+
+function isThirdModule(module) {
+  var context = module.context;
+  if (typeof context !== 'string') {
+    return false;
+  }
+  return context.indexOf('second-route') !== -1;
+}
 
 function isExternal(module) {
   var context = module.context;

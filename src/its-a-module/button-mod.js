@@ -9,9 +9,15 @@ let buttonMod = () => {
     }
 };
 
-function ButtonCtrl ($scope) {
+function ButtonCtrl ($scope, $templateCache) {
+    $templateCache.put(
+        'src/its-a-module/tempalatay.html',
+        require('./tempalatay.html')
+    );
+
     $scope.doap = 'Imma do some stuff when i get clicked';
-    $scope.tempalatay = 'uib-partials/tempalatay.html';
+    // $scope.tempalatay = 'uib-partials/tempalatay.html';
+    $scope.tempalatay = 'src/its-a-module/tempalatay.html';
     $scope.status = {
         isopen: false
     }
@@ -22,7 +28,7 @@ function ButtonCtrl ($scope) {
     }
 }
 
-ButtonCtrl.$inject = ['$scope'];
+ButtonCtrl.$inject = ['$scope', '$templateCache'];
 
 const MODULE_NAME = 'ButtonMod';
 
@@ -31,5 +37,9 @@ angular.module(MODULE_NAME, [
 ])
 .directive('moddy', buttonMod)
 .controller('ButtonCtrl', ButtonCtrl);
+
+// const strictDi = true;
+
+// angular.bootstrap(document, [MODULE_NAME], {strictDi})
 
 export default MODULE_NAME;
